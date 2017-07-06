@@ -1,25 +1,25 @@
-function [dtwDist, dtwLen] = TS_dtwDistance(traj1, traj2, winSize)
+function [dtwDist, dtwLen] = TS_dtwDistance(ts1, ts2, winSize)
     
 %     ************
 %
 %     Description
 %     ----------
-%     Compute the Dynamic-Time Warping distance between trajectory traj1 and traj2.
+%     Compute the Dynamic-Time Warping distance between time series ts1 and ts2.
 % 
 %     Parameters
 %     ----------
-%     param traj1   :   m x dim, trajectory 1 matrix with the length of m
-%     param traj2   :   n x dim, trajectory 2 matrix with the length of n
+%     param ts1   :   m x dim, time series 1 matrix with the length of m
+%     param ts2   :   n x dim, time series 2 matrix with the length of n
 %
 %     Options
 %     ----------
 %     opt winSize   :   integer,   temporal constraint on the warping window
-%                              size. default value = -1
+%                              size. default value = -1 
 %
 %     Returns
 %     -------
-%     dtwDist       :   double, The Dynamic-Time Warping distance between trajectory traj1 and traj2
-%     dtwLen        :   integer, Show the length of warping path between trajectories
+%     dtwDist       :   double, The Dynamic-Time Warping distance between time series ts1 and ts2.
+%     dtwLen        :   integer, Show the length of warping path between time series
 %
 %     Other m-files required    : TS_euclideanDistance
 %     Subfunctions              : none
@@ -42,14 +42,14 @@ if ~exist('winSize','var')
     winSize = -1;
 end
 
-if size(traj1, 2) == size(traj2, 2)
-    dim = size(traj2, 2); %#ok<NASGU>
+if size(ts1, 2) == size(ts2, 2)
+    dim = size(ts2, 2); %#ok<NASGU>
 else
-    error('Two trajectories dimension must be the same')
+    error('Two time series dimension must be the same')
 end
 
-m = size(traj1, 1);
-n = size(traj2, 1);
+m = size(ts1, 1);
+n = size(ts2, 1);
 
 D = Inf(m + 1, n + 1);
 L = zeros(m + 1, n + 1);
@@ -71,7 +71,7 @@ for i = 2: m + 1
     end
     for j = jS:jF
         
-        tmpDist = TS_euclideanDistance(traj1(i - 1, :), traj2(j - 1, :));
+        tmpDist = TS_euclideanDistance(ts1(i - 1, :), ts2(j - 1, :));
         minVal = min([D(i, j - 1), D(i - 1, j - 1), D(i - 1, j)]);
         D(i, j) = tmpDist + minVal;
         L(i, j) = min([L(i, j - 1), L(i - 1, j - 1), L(i - 1, j)]) + 1;
@@ -80,11 +80,7 @@ for i = 2: m + 1
 end
 
 
-
 dtwDist = D(m + 1, n + 1);
 dtwLen = L(m + 1, n + 1);
 
 end
-
-
-   
